@@ -1,0 +1,7 @@
+* Information
+This is my work repository
+
+* ToDos
+
+- LTV Prediction - Lifetime value
+
