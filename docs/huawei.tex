@@ -1,0 +1,153 @@
+% Created 2024-02-11 Sun 23:18
+% Intended LaTeX compiler: pdflatex
+\documentclass[nobib]{tufte-handout}
+                   \usepackage[style=authoryear-comp,autocite=footnote]{biblatex}
+                   \addbibresource{/Users/kadirgunel/github/work/references.bib}
+
+                   \usepackage{nicefrac}
+                   \usepackage{units}
+                   
+
+
+\usepackage{listings}
+\author{Kadir Gunel, PhD\thanks{kadir.gunel@gmail.com}}
+\date{11.02.2024}
+\title{\textcolor{Blue}{Report for Huawei Technical Project}}
+\hypersetup{
+ pdfauthor={Kadir Gunel, PhD},
+ pdftitle={\textcolor{Blue}{Report for Huawei Technical Project}},
+ pdfkeywords={CTR, MLP, Hyperparameter Optimization},
+ pdfsubject={},
+ pdfcreator={Emacs 29.0.92 (Org mode 9.6.6)}, 
+ pdflang={English}}
+\begin{document}
+
+\maketitle
+\begin{abstract}
+This report intends to provide a quick overview of the tasks accomplished. It covers the data utilized, the preprocessing steps employed, the configuration of the models, and, of course, the results obtained from the models. It also emphasizes the crucial nature of all features in the dataset used for the models. The provided scripts include only model proposals without hyperparameter optimization. Additionally, the scripts do not include KNN search with cosine similarity.
+
+\\
+\\
+Best Regards 
+\end{abstract}
+
+
+\section{\textcolor{Maroon}{Data}}
+\label{sec:org141caea}
+
+For the requested CTR models, \href{https://huggingface.co/datasets/reczoo/MovielensLatest\_x1}{MovieLens}\footnote{Downloaded from \url{https://huggingface.co/datasets/reczoo/MovielensLatest\_x1}} data set is
+used. This data set has only 3 features (user\textsubscript{id}, item\textsubscript{id} and
+tag\textsubscript{id}) and a binary label set. Its training, validation and test
+sets are already prepared. The training set consists of nearly 1.5
+Million samples, where as validation and test sets have 400 thousand
+and 200 thousand samples. 
+
+
+\subsection{\textcolor{Mahogany}{Pre-processing}}
+\label{sec:orge28ebdf}
+
+Since the main experiments are dependent to the \cite{zhao2022fint},
+their approach is followed. We eliminated the least frequent 10
+features and replaced them as the "unknown word" just like in natural
+language processing. 
+
+
+\section{\textcolor{Maroon}{Experiments}}
+\label{sec:orgd7d8b4d}
+All conducted experiments are done with either by using all three 
+features or  by using only 2 specific features - \emph{user\textsubscript{id}} and
+\emph{item\textsubscript{id}}. 
+
+For both experiments, the embedding layers are derived from the
+features of training sets - all put inside single embedding layer.
+
+For all the experiments, binary cross entropy is used for minimizing
+the error rate. Additionally, the models' performances are tested with
+\emph{Area Under the Curve} (AUC) - in order to see if the model learns to
+predict correctly and not by random.
+
+For both models, \emph{FINT} and MLP, embedding size is set to 16, hidden dimensions
+of the DNN classifier is set to 300 just like in the paper. For the
+optimizer \emph{Adam} is used with a learning rate of \(1e-3\). Batch sizes
+are set to 1024. 
+
+
+
+
+\section{\textcolor{Maroon}{Results}}
+\label{sec:org9cd9d4b}
+
+Table below \ref{tab:results} shows results for FINT and MLP
+models. Note that none of the models perform well when using only
+user\textsubscript{id} and item\textsubscript{id}\footnote{Their AUC results show that both classifiers behave randomly
+when using only these 2 features.}. Hence it is decided to show only the
+better results.
+
+
+
+\begin{table}[htbp]
+  \centering
+  \begin{tabular}{l|c|c}
+   \hline
+         & BCE Loss & AUC\\[0pt]
+   \hline
+   FINT & .247 / .2995 / .2992 & .9564 / .9350 / .9350\\[0pt]
+   \hline
+   MLP & .2509 / .3132 / .3119 & .9557 / .9308 / .9312\\[0pt]
+   \hline
+  \end{tabular}
+  \caption{Results for the training, validation and test loss and AUC results respectively for FINT and MLP models using all 3 features.}
+  \label{tab:results}
+\end{table}
+
+
+
+
+
+
+
+
+
+\section{\textcolor{Maroon}{Question #2}}
+\label{sec:orgd185cc0}
+
+\subsection{\textcolor{Mahogany}{Part 1}}
+\label{sec:org462952f}
+Since each model has an embedding layer which include a dedicated user\textsubscript{id} and
+item\textsubscript{id} vectors. A simple \uline{cosine similarty} search with k-nearest neighbor
+search can be done. For this case k equals to \(5\). So given the
+user\textsubscript{id} whole item\textsubscript{id} embeddings will be searched. And the first 5
+of them will be recommended to this specific user.
+
+\subsection{\textcolor{Mahogany}{More advanced search : Cross Domain Similarity Local Scaling}}
+\label{sec:org3257b33}
+
+KNN search is fast but it has a severe problem which is called the
+hubness problem. \cite{DBLP:journals/corr/abs-1710-04087} tries to
+solve this problem by using cross domain similarity search. It is more
+costly compared to knn but it finds better candidates. 
+
+
+\section{\textcolor{Maroon}{Question #3}}
+\label{sec:org2077650}
+
+If the model is performing poorly on the production, this might have
+different explanations :
+\begin{enumerate}
+\item the model encounters with information that the neither training nor
+the test set has this kind of information
+\item The production data might include too many "unknown words" hence
+the model performs bad.
+\end{enumerate}
+
+Solutions:
+\begin{itemize}
+\item just collect that data and train the model from
+scratch.
+\end{itemize}
+
+
+
+\newpage
+\printbibliography
+\end{document}
