@@ -22,6 +22,17 @@ This is my work repository
   (eglot-connect-timeout 30))
 
 
+;; .dir-locals.el at project root
+((python-mode . ((eglot-workspace-configuration .
+  (:python (:pythonPath ".venv/bin/python")
+   :pyright (:openFilesOnly t)
+   :python.analysis (:typeCheckingMode "basic"     ; off | basic | standard | strict
+                     :autoImportCompletions t
+                     :autoSearchPaths t
+                     :useLibraryCodeForTypes t
+                     :diagnosticMode "workspace"))))))
+
+
 
 '''
 
