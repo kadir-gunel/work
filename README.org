@@ -5,3 +5,23 @@ This is my work repository
 
 - LTV Prediction - Lifetime value
 
+
+
+''' python 
+
+
+(use-package eglot
+  :hook ((python-mode python-ts-mode) . eglot-ensure)
+  :config
+  (add-to-list 'exec-path (expand-file-name "~/.local/bin"))
+  (add-to-list 'eglot-server-programs
+               '((python-mode python-ts-mode) .
+                 ("pyright-langserver" "--stdio")))
+  :custom
+  (eglot-autoshutdown t)
+  (eglot-connect-timeout 30))
+
+
+
+'''
+
